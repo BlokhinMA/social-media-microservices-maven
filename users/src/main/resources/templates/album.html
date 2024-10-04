@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Альбом</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1 th:text="|Альбом ${album.name}|" style="display: inline"></h1>
+
+<th:block th:if="${user.login} == ${album.userLogin}">
+
+    <button id="deleteAlbum">удалить</button>
+
+    <br>
+    <br>
+
+    <form id="createPhotos">
+        <input type="file" id="files" accept="image/*" multiple required>
+        <button>Добавить фотографию(и)</button>
+    </form>
+
+    <br>
+    <br>
+
+</th:block>
+
+<div th:each="photo : ${album.photos}">
+    <a th:href="@{/photo/{id}(id=${photo.id})}"><img class="photo" th:id="${photo.id}"></a>
+    <th:block th:if="${user.login} == ${album.userLogin}">
+        <button class="deletePhoto" th:id="|photo${photo.id}|">удалить</button>
+    </th:block>
+</div>
+
+<script>
+
+    const imgs = document.querySelectorAll('.photo');
+
+    if (imgs.length !== 0)
+        imgs.forEach(img => {
+
+            fetch(`http://localhost:8765/albums/photo_entity/${img.id}`, requestOptions)
+                .then(response => {
+                    if (response.ok)
+                        return response.blob();
+                    throw new Error('Network response was not ok.');
+                })
+                .then(blob => {
+                    img.src = URL.createObjectURL(blob);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+        });
+
+</script>
+
+<script>
+
+    const deleteAlbumButton = document.getElementById('deleteAlbum');
+
+    if (deleteAlbumButton !== null)
+        deleteAlbumButton.addEventListener('click', function (event) {
+
+            fetch(`http://localhost:8765/albums/delete_album?id=[[${album.id}]]&login=[[${user.login}]]`, {
+                headers: {
+                    'Authorization': `[[${token}]]`,
+                },
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `http://${window.location.host}/my_albums`;
+                        return;
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка:', error);
+                });
+
+        });
+
+</script>
+
+<script>
+
+    const deletePhotoButtons = document.querySelectorAll('.deletePhoto');
+
+    if (deletePhotoButtons.length !== 0)
+        deletePhotoButtons.forEach(button => {
+            button.addEventListener('click', function () {
+
+                const id = button.id.replace('photo', '');
+
+                fetch(`http://localhost:8765/albums/delete_photo?id=${id}&login=[[${user.login}]]`, {
+                    headers: {
+                        'Authorization': `[[${token}]]`,
+                    },
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Network response was not ok.');
+                    })
+                    .then(data => {
+                        document.getElementById(`photo${data}`).parentElement.remove();
+                    })
+                    .catch(error => {
+                        console.error('Произошла ошибка:', error);
+                    });
+                
+                });
+
+        });
+
+</script>
+
+</body>
+</html>

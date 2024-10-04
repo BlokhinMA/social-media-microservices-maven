@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Мои альбомы</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Мои альбомы</h1>
+
+<a th:href="@{/find_albums}">Найти альбомы</a>
+<br>
+<a th:href="@{/find_photos}">Найти фотографии</a>
+
+<p>Создать альбом</p>
+
+<form id="addAlbum">
+    <label for="name">Название альбома</label>
+    <input type="text" id="name" placeholder="Название альбома" required>
+    <br><br>
+    <label for="files">Фотографии</label>
+    <input type="file" id="files" accept="image/*" multiple>
+    <br><br>
+    <button>Создать</button>
+</form>
+
+<br>
+<br>
+
+<div id="albums" class="adaptiveContainer">
+    <div th:each="album : ${albums}">
+        <a th:href="@{/album/{id}(id=${album.id})}" th:text="${album.name}"></a>
+        <button class="deleteAlbum" th:id="|album${album.id}|">удалить</button>
+    </div>
+</div>
+
+<script>
+
+    const addAlbumForm = document.getElementById('addAlbum');
+
+    addAlbumForm.addEventListener('submit', function (event) {
+
+        event.preventDefault();
+
+        const name = document.getElementById('name').value,
+            files = document.getElementById('files')/*.files*/;
+
+        /*console.log(files);*/
+
+        const formData = new FormData(files);
+
+        fetch(`http://localhost:8765/albums/add_album?name=${name}&login=[[${user.login}]]`, {
+            headers: {
+                'Authorization': `[[${token}]]`,
+                'Content-Type': 'multipart/form-data',
+            },
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+
+                const id = data.id;
+
+                const html =
+                    `<div id="album${id}">
+                        <a href="album/${id}">${data.name}</a>
+                        <form class="deleteAlbum" style="display: inline; border: 0">
+                            <input type="hidden" value="${id}">
+                            <button>удалить</button>
+                        </form>
+                    </div>`;
+
+                document.getElementById('albums').insertAdjacentHTML('beforeend', html);
+
+                document.getElementById('name').value = '';
+                document.getElementById('files').value = '';
+
+            })
+            .catch(error => {
+                console.error('Произошла ошибка: ', error);
+            });
+    });
+
+</script>
+
+<script>
+
+    const deleteAlbumButtons = document.querySelectorAll('.deleteAlbum');
+
+    if (deleteAlbumButtons.length !== 0)
+        deleteAlbumButtons.forEach(button => {
+            button.addEventListener('click', function () {
+
+                const id = button.id.replace('album', '');
+
+                fetch(`http://localhost:8765/albums/delete_album?id=${id}&login=[[${user.login}]]`, {
+                    headers: {
+                        'Authorization': `[[${token}]]`,
+                    },
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok)
+                            return response.json();
+                        throw new Error('Network response was not ok.');
+                    })
+                    .then(data => {
+                        document.getElementById(`album${data}`).parentNode.remove();
+                    })
+                    .catch(error => {
+                        console.error('Произошла ошибка:', error);
+                    });
+            });
+        });
+
+</script>
+
+</body>
+</html>

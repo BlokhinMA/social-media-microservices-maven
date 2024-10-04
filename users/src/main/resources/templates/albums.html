@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Альбомы</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<script>
+
+    let currentUrl = window.location.href,
+        userLogin = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+
+    fetch(`http://localhost:8765/albums/albums/${userLogin}`, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+
+            let body = document.querySelector('body'),
+                h1 = document.createElement('h1');
+
+            if (Object.keys(data).length === 0) {
+                h1.textContent = `Пользователь ${userLogin} ещё не добавил альбомы`;
+                body.appendChild(h1);
+            } else {
+                h1.textContent = `Альбомы пользователя ${data[0].userLogin}`;
+                body.appendChild(h1);
+                let key,
+                    p,
+                    a,
+                    host = window.location.host;
+                for (key in data) {
+                    p = document.createElement('p');
+                    a = document.createElement('a');
+                    a.href = `http://${host}/album/${data[key].id}`;
+                    a.textContent = `${data[key].name}`;
+                    p.appendChild(a);
+                    body.appendChild(p);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Произошла ошибка', error);
+        });
+
+</script>
+
+</body>
+</html>

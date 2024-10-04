@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Вход</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<h1>Вход</h1>
+
+<form id="signIn">
+    <label for="login">Логин</label><br>
+    <input type="text" id="login" name="login" placeholder="Логин" required><br>
+    <br>
+    <label for="password">Пароль</label><br>
+    <input type="password" id="password" name="password" placeholder="Пароль" required>
+
+    <br><br><br>
+
+    <button>Войти</button>
+</form>
+
+<script>
+
+    const form = document.getElementById('signIn');
+
+    form.addEventListener('submit', function(event) {
+        let wrong = document.getElementById('wrong');
+        if (wrong !== null)
+            wrong.remove();
+
+        event.preventDefault();
+
+        const login = document.getElementById('login').value;
+        const password = document.getElementById('password').value;
+
+        const data = {
+            login: login,
+            password: password,
+        }
+
+        fetch('http://localhost:8765/users/sign_in', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.ok)
+                    window.location.href = `http://${window.location.host}/my_profile`;
+                else {
+                    let form = document.getElementById('signIn');
+                    let p = document.createElement('p');
+                    p.id = 'wrong';
+                    p.textContent = 'Неправильный логин или пароль';
+                    p.style.color = 'red';
+                    form.appendChild(p);
+                }
+            })
+            .catch(error => {
+                console.error('Произошла ошибка:', error);
+            });
+    });
+
+</script>
+
+<p><a th:href="@{/sign_up}">Зарегистрироваться</a></p>
+
+</body>
+</html>

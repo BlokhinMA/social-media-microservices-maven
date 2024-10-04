@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:fragment="meta">
+        <meta charset="UTF-8" http-equiv="Content-Security-Policy">
+    </th:block>
+    <title>Мой профиль</title>
+    <th:block th:fragment="style">
+        <style>
+
+            body {
+                font-size: x-large;
+            }
+
+            img {
+                width: 50%;
+                height: auto;
+            }
+
+            form {
+                border: 1px solid black;
+                border-radius: 10px;
+                padding: 10px;
+                display: inline-block;
+            }
+
+            input {
+                border: 1px solid black;
+                border-radius: 10px;
+                font-size: x-large;
+            }
+
+            button {
+                border: 1px solid black;
+                border-radius: 10px;
+                font-size: x-large;
+            }
+
+            td {
+                border: 1px solid black;
+            }
+
+            .container {
+                border: 1px solid black;
+                border-radius: 10px;
+                padding: 10px;
+            }
+
+            .adaptiveContainer {
+                border: 1px solid black;
+                border-radius: 10px;
+                padding: 10px;
+                display: inline-block;
+            }
+
+        </style>
+    </th:block>
+</head>
+<body>
+
+<th:block th:fragment="header">
+
+    <p>Вы вошли под логином <i th:text="${user.login}"></i></p>
+
+    <p><a th:href="@{/my_profile}">Мой профиль</a></p>
+    <p><a th:href="@{/my_albums}">Мои альбомы</a></p>
+    <p><a th:href="@{/my_communities}">Мои сообщества</a></p>
+
+    <th:block th:if="${user.role} == 'ADMIN'">
+        <hr>
+        <p><a th:href="@{/admin/users}">Пользователи</a></p>
+        <p><a th:href="@{/admin/albums}">Альбомы</a></p>
+        <p><a th:href="@{/admin/photos}">Фото</a></p>
+        <p><a th:href="@{/admin/photo_tags}">Теги фото</a></p>
+        <p><a th:href="@{/admin/photo_ratings}">Оценки фото</a></p>
+        <p><a th:href="@{/admin/photo_comments}">Комментарии фото</a></p>
+        <p><a th:href="@{/admin/communities}">Сообщества</a></p>
+        <p><a th:href="@{/admin/community_members}">Участники сообществ</a></p>
+        <p><a th:href="@{/admin/community_posts}">Посты сообществ</a></p>
+        <p><a th:href="@{/admin/downloadLogs}">Скачать логи</a></p>
+        <p><a th:href="@{/admin/downloadAudit}">Скачать аудит</a></p>
+    </th:block>
+
+    <button id="logout">выйти</button>
+
+    <script>
+        const button = document.getElementById('logout');
+
+        const requestOptions = {
+            headers: {
+                'Authorization': `[[${token}]]`
+            }
+        };
+
+        button.addEventListener('click', function () {
+            fetch(`http://localhost:8765/users/logout?login=[[${user.login}]]`, requestOptions)
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `http://${window.location.host}/sign_in`;
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка', error);
+                });
+        });
+
+    </script>
+
+    <hr>
+
+</th:block>
+
+<h1>Мой профиль</h1>
+
+</body>
+</html>

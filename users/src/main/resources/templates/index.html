@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Главная страница</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<h1>Главная страница</h1>
+
+<p><a th:href="@{/sign_up}">Зарегистрироваться</a></p>
+<p><a th:href="@{/sign_in}">Войти</a></p>
+
+</body>
+</html>

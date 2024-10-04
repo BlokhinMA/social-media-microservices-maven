@@ -1,0 +1,1 @@
+2024-10-04T12:25:31.109302300 Пользователь User(id=1, login=user, email=user@user, firstName=1, lastName=1, birthDate=2023-10-28, password=null, role=USER) вошел в систему

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Теги фото</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Оценки фото</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>rating</td>
+        <td>rating_user_login</td>
+        <td>photo_id</td>
+    </tr>
+    <tr th:each="photoRating : ${photoRatings}">
+        <td th:text="${photoRating.id}"></td>
+        <td th:text="${photoRating.rating}"></td>
+        <td th:text="${photoRating.ratingUserLogin}"></td>
+        <td th:text="${photoRating.photoId}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

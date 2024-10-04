@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Сообщества</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<script>
+
+    let currentUrl = window.location.href,
+        memberLogin = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+
+    fetch(`http://localhost:8765/communities/communities/${memberLogin}`, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            let body = document.querySelector('body'),
+                h1 = document.createElement('h1');
+            h1.textContent = `Сообщества пользователя ${memberLogin}`;
+            body.appendChild(h1);
+            let key,
+                p,
+                a,
+                host = window.location.host;
+            for (key in data) {
+                p = document.createElement('p');
+                a = document.createElement('a');
+                a.href = `${host}/community/${data[key].id}`;
+                a.textContent = `${data[key].name}`;
+                p.appendChild(a);
+                body.appendChild(p);
+            }
+        })
+        .catch(error => {
+            console.error('Произошла ошибка', error);
+        });
+
+</script>
+
+</body>
+</html>

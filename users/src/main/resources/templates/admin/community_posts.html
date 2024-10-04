@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Посты сообществ</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Посты сообществ</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>post_text</td>
+        <td>creation_time_stamp</td>
+        <td>author_login</td>
+        <td>community_id</td>
+    </tr>
+    <tr th:each="communityPost : ${communityPosts}">
+        <td th:text="${communityPost.id}"></td>
+        <td th:text="${communityPost.postText}"></td>
+        <td th:text="${communityPost.creationTimeStamp}"></td>
+        <td th:text="${communityPost.authorLogin}"></td>
+        <td th:text="${communityPost.communityId}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

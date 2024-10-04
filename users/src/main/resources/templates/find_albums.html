@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Найти альбомы</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Найти альбомы</h1>
+
+<form id="findAlbums">
+    <label for="keyword">Введите ключевые слова</label>
+    <input type="search" id="keyword" required>
+    <button>искать</button>
+</form>
+
+<div id="albums">
+
+</div>
+
+<script>
+
+    const findAlbumsForm = document.getElementById('findAlbums');
+
+    findAlbumsForm.addEventListener('submit', function(event) {
+
+        event.preventDefault();
+
+        const keyword = document.getElementById('keyword').value;
+
+        fetch(`http://localhost:8765/albums/find_albums?keyword=${keyword}&login=[[${user.login}]]`, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+
+                let html = '';
+
+                for (const key in data) {
+                    html +=
+                        `<div>
+                            <a href="album/${data[key].id}">${data[key].name}</a>
+                        </div>`;
+                }
+
+                document.getElementById('albums').innerHTML = html;
+
+            })
+            .catch(error => {
+                console.error('Произошла ошибка:', error);
+            });
+
+    });
+
+</script>
+
+</body>
+</html>

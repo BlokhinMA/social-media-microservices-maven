@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Пользователи</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Пользователи</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>login</td>
+        <td>email</td>
+        <td>first_name</td>
+        <td>last_name</td>
+        <td>birth_date</td>
+        <td>role</td>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.login}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.firstName}"></td>
+        <td th:text="${user.lastName}"></td>
+        <td th:text="${user.birthDate}"></td>
+        <td>
+            <form class="updateRole" style="border: 0; padding: 0; display: inline-block">
+                <input type="hidden" th:value="${user.id}">
+                <input th:value="${user.role}">
+                <button class="change">изменить</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<script>
+
+    const forms = document.querySelectorAll('.updateRole');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const id = form.children.item(0).value,
+                role = form.children.item(1).value;
+
+            fetch(`http://localhost:8765/users/update_role?id=${id}&role=${role}&login=[[${user.login}]]`, requestOptions)
+                .then(response => {
+                    if (response.ok) {
+                        return;
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка:', error);
+                });
+        });
+    });
+
+</script>
+
+</body>
+</html>

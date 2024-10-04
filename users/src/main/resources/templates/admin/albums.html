@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Альбомы</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Альбомы</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>name</td>
+        <td>user_login</td>
+    </tr>
+    <tr th:each="album : ${albums}">
+        <td th:text="${album.id}"></td>
+        <td th:text="${album.name}"></td>
+        <td th:text="${album.userLogin}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

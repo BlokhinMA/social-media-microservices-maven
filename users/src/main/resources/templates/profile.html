@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Профиль пользователя</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<script>
+    let currentUrl = window.location.href,
+        login = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+
+    fetch(`http://localhost:8765/users/${login}`, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            let body = document.querySelector('body'),
+                h1 = document.createElement('h1');
+
+            h1.textContent = `Профиль пользователя ${data.login}`;
+            body.appendChild(h1);
+
+            let p,
+                a,
+                host = window.location.host;
+
+            p = document.createElement('p');
+            a = document.createElement('a');
+            a.href = `http://${host}/albums/${data.login}`;
+            a.textContent = `Альбомы пользователя ${data.login}`;
+            p.appendChild(a);
+            body.appendChild(p);
+
+            p = document.createElement('p');
+            a.href = `http://${host}/communities/${data.login}`;
+            a.textContent = `Сообщества пользователя ${data.login}`;
+            p.appendChild(a);
+            body.appendChild(p);
+        })
+        .catch(error => {
+            console.error('Произошла ошибка', error);
+        });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Фото</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Фото</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>name</td>
+        <td>original_file_name</td>
+        <td>size</td>
+        <td>content_type</td>
+        <td>image</td>
+        <td>creation_time_stamp</td>
+        <td>album_id</td>
+    </tr>
+    <tr th:each="photo : ${photos}">
+        <td th:text="${photo.id}"></td>
+        <td th:text="${photo.name}"></td>
+        <td th:text="${photo.originalFileName}"></td>
+        <td th:text="${photo.size}"></td>
+        <td th:text="${photo.contentType}"></td>
+        <td><img class="photo" th:id="${photo.id}"></td>
+        <td th:text="${photo.creationTimeStamp}"></td>
+        <td th:text="${photo.albumId}"></td>
+    </tr>
+</table>
+
+<script>
+
+    const imgs = document.querySelectorAll('.photo');
+
+    imgs.forEach(img => {
+
+        fetch(`http://localhost:8765/albums/photo_entity/${img.id}`, requestOptions)
+            .then(response => {
+                if (response.ok)
+                    return response.blob();
+                throw new Error('Network response was not ok.');
+            })
+            .then(blob => {
+                img.src = URL.createObjectURL(blob);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+    });
+
+</script>
+
+</body>
+</html>

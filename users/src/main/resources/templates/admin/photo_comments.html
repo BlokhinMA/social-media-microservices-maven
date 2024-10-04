@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Комментарии фото</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Комментарии фото</h1>
+
+<table>
+    <tr>
+        <td>id</td>
+        <td>comment</td>
+        <td>commenting_time_stamp</td>
+        <td>commenting_user_login</td>
+        <td>photo_id</td>
+    </tr>
+    <tr th:each="photoComment : ${photoComments}">
+        <td th:text="${photoComment.id}"></td>
+        <td th:text="${photoComment.comment}"></td>
+        <td th:text="${photoComment.commentingTimeStamp}"></td>
+        <td th:text="${photoComment.commentingUserLogin}"></td>
+        <td th:text="${photoComment.photoId}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

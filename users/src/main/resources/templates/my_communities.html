@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{my_profile :: meta}"></th:block>
+    <title>Мои сообщества</title>
+    <th:block th:replace="~{my_profile :: style}"></th:block>
+</head>
+<body>
+
+<th:block th:replace="~{my_profile :: header}"></th:block>
+
+<h1>Мои сообщества</h1>
+
+<a th:href="@{/community_management}">Управление сообществами</a>
+<br>
+<a th:href="@{/find_communities}">Найти сообщества</a>
+
+<p>Подписки</p>
+<div th:each="community : ${communities}" class="adaptiveContainer">
+    <a th:href="@{/community/{id}(id=${community.id})}" th:text="${community.name}"></a>
+</div>
+
+<script>
+
+
+
+</script>
+
+</body>
+</html>
